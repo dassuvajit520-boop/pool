@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Azure Infinity Pools</title>
+    <script>
+      // Protect fetch from being overwritten by polyfills
+      (function() {
+        const originalFetch = window.fetch;
+        if (originalFetch) {
+          try {
+            const descriptor = {
+              configurable: false,
+              enumerable: true,
+              get: function() { return originalFetch; },
+              set: function(v) { 
+                console.warn('Blocked attempt to overwrite fetch');
+              }
+            };
+            Object.defineProperty(window, 'fetch', descriptor);
+            if (typeof globalThis !== 'undefined') {
+              Object.defineProperty(globalThis, 'fetch', descriptor);
+            }
+          } catch (e) {
+            console.error('Failed to protect fetch:', e);
+          }
+        }
+        window.global = window;
+        window.globalThis = window;
+        window.process = { env: { NODE_ENV: 'development' } };
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
